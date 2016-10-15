@@ -1,10 +1,356 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <meta name="viewport" content="target-densitydpi=device-dpi,width=640, user-scalable = no">
+    <meta name="msapplication-tap-highlight" content="no"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta content="telephone=no" name="format-detection"/>
+    <title class="pageTitle"></title>
+    <link href="http://go.163.com/css/default.css" rel="stylesheet" type="text/css"/>
+    <link href="stylesheets/style.css?123" rel="stylesheet" type="text/css"/>
+    <script src="http://img2.126.net/ntesrich/ad/zepto.min.js"></script>
+    <script src="data/data.js?123"></script>
+    <script>
+        $(function () {
+            var dataIndex = 0;
+            var dataLength = 0;
+            var turntableLength = 20;
+            var currentRotate = 0;
+            var endRotate = -90;
+            var limitRotate = 0;
+            var turntableZ = -1060;
+            var turntableY = 0;
+            var turntableRadius = 225/2/Math.tan(Math.PI/turntableLength)*1.5;
+            for(var year in historyData){
+                for(var month in historyData[year]){
+                    dataLength+=historyData[year][month].length;
+                }
+            }
+            limitRotate = (dataLength-3)*360/(turntableLength);
+            console.log(limitRotate);
+            var touchLock = false;
+            var resetEndTime = null;
+            $('body').on('touchstart',function (e) {
+                this.oldPageY = this.initPageY = e.changedTouches[0].pageY;
+                clearTimeout(resetEndTime);
+                resetEndTime=setTimeout(resetEndPos,100);
+            }).on('touchmove',function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                var offsetAll = e.changedTouches[0].pageY - this.initPageY;
+                if(!$('.wrapper').hasClass('show')){
+                    if(offsetAll<-200)$('.wrapper').addClass('show');
+                }else if(touchLock){
+                    var offset = e.changedTouches[0].pageY - this.oldPageY;
+                    if(endRotate<0){
+                        offset*=Math.max(0,(10+endRotate))/10;
+                        if(offsetAll>200){
+                            $('.wrapper').removeClass('show');
+                        }
+                    }
+                    if(endRotate>limitRotate){
+                        offset*=Math.max(0,(10-(endRotate-limitRotate)))/10;
+                        $('.bg-logo2').addClass('show');
+                    }else{
+                        $('.bg-logo2').removeClass('show');
+                    }
+
+                    endRotate -= offset*.3;
+                    this.oldPageY = e.changedTouches[0].pageY;
+                }
+                clearTimeout(resetEndTime);
+                resetEndTime=setTimeout(resetEndPos,100);
+            });
+            function resetEndPos() {
+                if(touchLock){
+                    var rotate = 360/turntableLength;
+                    if(endRotate<0){
+                        endRotate = 0;
+                    }else if(endRotate>limitRotate){
+                        endRotate = limitRotate;
+                    }else{
+                        endRotate = (Math.floor(endRotate/rotate)+Math.round(endRotate%rotate/rotate))*rotate;
+                    }
+                }
+            }
+            $('.bg-title').on('transitionend webkitTransitionEnd',function (e) {
+                if(e.target==this){
+                    if($('.wrapper').hasClass('show')){
+                        touchLock=true;
+                        endRotate = 0;
+                    }else{
+                        touchLock=false;
+                        endRotate = -180;
+                    }
+                }
+            });
+            function checkShowMonth() {
+                if($('.date-div .select').hasClass('show'))return $('.date-div .select');
+                var index=$('.date-div .select').index();
+                for(var i=1;i<turntableLength;i++){
+                    index-=1;
+                    if($('.date-div .turntable').eq(index).hasClass('show'))return $('.date-div .turntable').eq(index);
+                }
+            }
+            updateData(true);
+            function updateData(init) {
+                var turntableIndex = $('.text-div .select').index();
+                var prevEle = [];
+                var nextEle = [];
+                var currentEle = $('.text-div .select');
+                for(var i=turntableIndex-1; i>=turntableIndex-turntableLength/4;i--){
+                    prevEle.push($('.text-div .turntable').eq(i%turntableLength));
+                }
+                for(var i=turntableIndex+1; i<=turntableIndex+turntableLength/4;i++){
+                    nextEle.push($('.text-div .turntable').eq(i%turntableLength));
+                }
+                if(init){
+                    $('.turntable').each(function () {
+                        var turntableClass = $(this).html('').attr('class');
+                        turntableClass = turntableClass.replace(/bg\-date\_\w+\s*|bg\-textbg\s*/g,'');
+                        $(this).attr('class',turntableClass);
+                    });
+                }
+                addEle(currentEle,dataIndex);
+                for(var i=0; i<prevEle.length;i++){
+                    var _this = prevEle[i];
+                    if(dataIndex-i>0){
+                        addEle(_this,dataIndex-(i+1),true);
+                    }
+                }
+                for(var i=0; i<nextEle.length;i++){
+                    var _this = nextEle[i];
+                    if(dataIndex+(i+1)<dataLength){
+                        addEle(_this,dataIndex+(i+1));
+                    }
+                }
+                clearEle(currentEle);
+                function clearEle(selectEle) {
+                    var index = selectEle.index();
+                    for(var i = turntableLength/4;i<turntableLength/2;i++){
+                        var textEle = $('.text-div .turntable').eq((index+i)%turntableLength);
+                        var dateEle = $('.date-div .turntable').eq((index+i)%turntableLength);
+                        textEle.html('').attr('class',textEle.attr('class').replace(/bg\-date\_\w+\s*|bg\-textbg\s*|show\s*/g,''));
+                        dateEle.attr('class',dateEle.attr('class').replace(/bg\-date\_\w+\s*|bg\-textbg\s*|show\s*/g,''));
+                        dateEle.data('month',-1).data('year',-1).data('limitR',1).attr('style','');
+                    }
+                }
+                function addEle(_this,index,prev) {
+                    if(index>-1&&dataIndex<dataLength){
+                        var checkIndex = 0;
+                        $(_this).addClass('bg-textbg');
+                        for(var year in historyData){
+                            for(var month in historyData[year]){
+                                for(var i = 0;i<historyData[year][month].length;i++){
+                                    if(checkIndex==index){
+                                        var eleIndex = $(_this).index();
+                                        $('.date-div .turntable').eq(eleIndex).data('month',month).data('year',year).data('limitR',historyData[year][month].length);
+                                        var str='<span>'+historyData[year][month][i].text+'</span>';
+                                        if(historyData[year][month][i].pic)str+='<img src="'+historyData[year][month][i].pic+'"/>';
+                                        if(historyData[year][month][i].link)str = '<a href="'+historyData[year][month][i].link+'" target="_blank">'+str+'</a>';
+                                        $('.text-div .turntable').eq(eleIndex).html(str);
+                                        if(i==0){
+                                            $('.date-div .turntable').eq(eleIndex).addClass('bg-date_'+month).addClass('show');
+                                            if(prev){
+                                                var initRotate = eleIndex*360/turntableLength;
+                                                $('.date-div .turntable').eq(eleIndex).css({
+                                                    transform:'rotateX('+(-initRotate-(historyData[year][month].length-1)*360/turntableLength)+'deg) translateZ('+turntableRadius+'px)',
+                                                    webkitTransform:'rotateX('+(-initRotate-(historyData[year][month].length-1)*360/turntableLength)+'deg) translateZ('+turntableRadius+'px)',
+                                                });
+                                            }
+                                        }
+                                        return;
+                                    }
+                                    checkIndex++;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            function updateShowRotate(speed) {
+                var showEle = checkShowMonth();
+                if(!showEle)return;
+                var limit = showEle.data('limitR')-1;
+                var initRotate = showEle.index()*360/turntableLength;
+                if(limit>0&&speed!=0){
+                    if(currentRotate%360>initRotate&&currentRotate%360<initRotate+limit*360/turntableLength){
+                        showEle.css({
+                            transform:'rotateX('+(-currentRotate%360)+'deg) translateZ('+turntableRadius+'px)',
+                            webkitTransform:'rotateX('+(-currentRotate%360)+'deg) translateZ('+turntableRadius+'px)',
+                        });
+                    }else if(currentRotate%360<initRotate){
+                        showEle.css({
+                            transform:'rotateX('+(-initRotate)+'deg) translateZ('+turntableRadius+'px)',
+                            webkitTransform:'rotateX('+(-initRotate)+'deg) translateZ('+turntableRadius+'px)',
+                        });
+                    }else if(currentRotate%360>initRotate-limit*360/turntableLength){
+                        showEle.css({
+                            transform:'rotateX('+(-initRotate-limit*360/turntableLength)+'deg) translateZ('+turntableRadius+'px)',
+                            webkitTransform:'rotateX('+(-initRotate-limit*360/turntableLength)+'deg) translateZ('+turntableRadius+'px)',
+                        });
+                    }
+                }
+            }
+            var oldTime = null;
+            var oldIndex = 0;
+            function updateRotate() {
+                var time = new Date();
+                if(!oldTime)oldTime = time;
+                var offsetTime = time.getTime()-oldTime.getTime();
+                oldTime = time;
+                if(offsetTime>1000/30)offsetTime=1000/30;
+                var speed = (endRotate-currentRotate)*.2*offsetTime/(1000/60);
+                if(Math.abs(speed)<0.001)speed=0;
+                currentRotate += speed;
+                if(speed==0) {
+                    currentRotate = Math.round(currentRotate);
+                }
+                if(Math.abs(speed)<0.1){
+                    $('.text-div .turntable.select img').css('opacity',1);
+                }else{
+                    $('.text-div .turntable img').css('opacity',0);
+                }
+                $('.rotate').css({
+                    transform:'translateY('+turntableY+'px) translateZ('+turntableZ+'px) rotateX('+currentRotate+'deg)',
+                    webkitTransform:'translateY('+turntableY+'px) translateZ('+turntableZ+'px) rotateX('+currentRotate+'deg)'
+                });
+                var currentIndex = Math.round(currentRotate/18);
+                if(oldIndex!=currentIndex){
+                    dataIndex+=currentIndex-oldIndex;
+                    $('.date-div .turntable').removeClass('select').eq(currentIndex).addClass('select');
+                    $('.text-div .turntable').removeClass('select').eq(currentIndex).addClass('select');
+                    if($('.date-div .turntable.select').data('year')!=-1) $('.bg-year').attr('class','bg-sprites bg-year bg-'+$('.date-div .turntable.select').data('year'));
+                    updateData();
+                    oldIndex=currentIndex;
+                }
+                updateShowRotate(speed);
+                requestAnimationFrame(updateRotate);
+            }
+            requestAnimationFrame(updateRotate);
+        });
+    </script>
 </head>
 <body>
-    test
+    <div class="wrapper">
+        <span class="bg-sprites bg-logo sclae"></span>
+        <div class="scale-div">
+            <div class="bg-sprites bg-title">
+                <div class="bg-sprites bg-next"></div>
+            </div>
+            <div class="history">
+                <div class="date-div rotate">
+                    <div class="bg-sprites select turntable turntable-1"></div>
+                    <div class="bg-sprites turntable turntable-2"></div>
+                    <div class="bg-sprites turntable turntable-3"></div>
+                    <div class="bg-sprites turntable turntable-4"></div>
+                    <div class="bg-sprites turntable turntable-5"></div>
+                    <div class="bg-sprites turntable turntable-6"></div>
+                    <div class="bg-sprites turntable turntable-7"></div>
+                    <div class="bg-sprites turntable turntable-8"></div>
+                    <div class="bg-sprites turntable turntable-9"></div>
+                    <div class="bg-sprites turntable turntable-10"></div>
+                    <div class="bg-sprites turntable turntable-11"></div>
+                    <div class="bg-sprites turntable turntable-12"></div>
+                    <div class="bg-sprites turntable turntable-13"></div>
+                    <div class="bg-sprites turntable turntable-14"></div>
+                    <div class="bg-sprites turntable turntable-15"></div>
+                    <div class="bg-sprites turntable turntable-16"></div>
+                    <div class="bg-sprites turntable turntable-17"></div>
+                    <div class="bg-sprites turntable turntable-18"></div>
+                    <div class="bg-sprites turntable turntable-19"></div>
+                    <div class="bg-sprites turntable turntable-20"></div>
+                </div>
+                <div class="text-div rotate">
+                    <div class="bg-sprites select turntable turntable-1"></div>
+                    <div class="bg-sprites turntable turntable-2"></div>
+                    <div class="bg-sprites turntable turntable-3"></div>
+                    <div class="bg-sprites turntable turntable-4"></div>
+                    <div class="bg-sprites turntable turntable-5"></div>
+                    <div class="bg-sprites turntable turntable-6"></div>
+                    <div class="bg-sprites turntable turntable-7"></div>
+                    <div class="bg-sprites turntable turntable-8"></div>
+                    <div class="bg-sprites turntable turntable-9"></div>
+                    <div class="bg-sprites turntable turntable-10"></div>
+                    <div class="bg-sprites turntable turntable-11"></div>
+                    <div class="bg-sprites turntable turntable-12"></div>
+                    <div class="bg-sprites turntable turntable-13"></div>
+                    <div class="bg-sprites turntable turntable-14"></div>
+                    <div class="bg-sprites turntable turntable-15"></div>
+                    <div class="bg-sprites turntable turntable-16"></div>
+                    <div class="bg-sprites turntable turntable-17"></div>
+                    <div class="bg-sprites turntable turntable-18"></div>
+                    <div class="bg-sprites turntable turntable-19"></div>
+                    <div class="bg-sprites turntable turntable-20"></div>
+                </div>
+                <div class="bg-sprites bg-selectbg">
+                    <span class="bg-sprites bg-year" style="color: #ffffff;"></span>
+                </div>
+                <div class="bg-sprites bg-logo2"></div>
+            </div>
+        </div>
+        <div id="audio_ctr" class="play scale"></div>
+        <audio id="mp3" src="song.mp3" loop="loop" autoplay="autoplay"></audio>
+        <script>
+            var mp3 = document.getElementById("mp3");
+            var audio_ctr = document.getElementById("audio_ctr");
+            mp3.addEventListener("canplaythrough",function() {
+                mp3.play();
+                canplay_lock = true;
+            },false);
+            mp3.onplaying = function(){
+                audio_ctr.className = 'play scale';
+            };
+            mp3.onpause = function(){
+                audio_ctr.className = 'pause scale';
+            };
+            audio_ctr.addEventListener('touchstart',function(){
+                if(audio_ctr.className.search(/play/)>=0){
+                    mp3.pause();
+                    audio_ctr.className = 'pause';
+                }else if(audio_ctr.className.search(/pause/)>=0){
+                    mp3.play();
+                    audio_ctr.className = 'play';
+                }
+            });
+        </script>
+    </div>
+    <script src='http://go.163.com/2015/0211/encore/js/share.js'></script>
+    <script src="http://go.163.com/2015/public/team/kongdejian/share.js"></script>
+    <script>
+        var shareData={
+            MsgImg:'http://go.163.com/2016/1012/neteasetime/share.jpg',  //分享图片
+            link:'http://go.163.com/2016/1012/neteasetime/',    //分享链接
+            title:'易路足迹 态度留声',   //分享标题
+            desc:'致有态度的你：我的过去未必有你，但我的未来希望有你参与！',    //分享描述
+            fText:'致有态度的你：我的过去未必有你，但我的未来希望有你参与！',    //分享朋友圈
+            callback:function(){
+                //回调
+                share_survey(true);
+            }
+        };
+        NeteaseShareInit();//用于初始化
+        //NeteaseShare();//用于调用分享
+        //NeteaseShareUpdate();//用于更新
+    </script>
+    <!-- START NetEase Devilfish 2006 -->
+    <script src="http://analytics.163.com/ntes.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        share_survey();
+        if(window.location.href.search(/auto\.163\.com|163\.com\/auto/)>=0){
+            _ntes_nacc = "auto";
+        } else if(window.location.href.search(/go\.163\.com/)>=0){
+            _ntes_nacc = "minisites";
+        }
+        neteaseTracker();
+        $('.tracker').click(function () {
+            tracker($(this).data('tracker'));
+        });
+        function tracker(text) {
+            if(!text)return;
+            var path = 'http://minisite.click.163.com'+location.pathname+text;
+            neteaseTracker(false, path, text, 'minisiteclick' );
+        }
+    </script>
 </body>
 </html>
