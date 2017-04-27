@@ -16,26 +16,11 @@
     <link rel="apple-touch-icon" sizes="144x144" href="../img/index/icon.png"/>
     <meta name="format-detection" content="telephone=no"/>
     <title>klvivian</title>
-    <script>
-        //document.documentElement.style.fontSize = window.innerWidth + 'px';
-        var zoomStyle = document.createElement('style');
-        document.documentElement.appendChild(zoomStyle);
-        (function zoomStyleFun() {
-            var psdWidth = 750;
-            var hasTitleBar = false;
-            var screenWidth = document.documentElement.clientWidth;
-            var screenHeight = document.documentElement.clientHeight;
-            // 750/1334是iphone plus的尺寸(无titleBar)
-            // 750/1207是iphone plus的尺寸(有titleBar)
-            var scaleTemp = screenHeight / screenWidth * (hasTitleBar ? 750 / 1207 : 750 / 1334);
-            scaleTemp = scaleTemp > 1 ? 1 : scaleTemp;
-            var fontTemp = screenWidth / (psdWidth / 2) * 50;
-            zoomStyle.innerHTML = 'html{font-size:' + fontTemp + 'px}.auto_scale{-webkit-transform: scale(' + scaleTemp + ');transform: scale(' + scaleTemp + ');}';
-        })();
-    </script>
     <link rel="stylesheet" href="css/index.css"/>
 </head>
 <body>
+<section class="navbox">
     <h1 class="logo"><strong>KLVIVIAN</strong></h1>
+</section>
 </body>
 </html>
