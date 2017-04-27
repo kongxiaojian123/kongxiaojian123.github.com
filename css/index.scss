@@ -6,6 +6,8 @@
 $color01:#fafafa;
 $color02:#161616;
 $color03:#777777;
+$color04:#0a0a0a;
+$menu_li_len:4;
 @function rpx($size) {
     $tempSize: $size/640;
     @if (unit($tempSize)=='') {
@@ -32,7 +34,7 @@ body{
 }
 a{
     text-decoration: none;
-    @include transition(color 0.5s);
+    @include transition(color 0.3s);
 }
 .logo,.font-stopd{
     font-family: 'stopd';
@@ -62,6 +64,13 @@ a{
         line-height: 35px;
         padding-top: 35px;
         font-size: 14px;
+        overflow: hidden;
+        @include transition(height 0.4s);
+        .current-nav{
+            a{
+                color: $color01;
+            }
+        }
         a{
             color: $color03;
             &:hover{
@@ -81,6 +90,77 @@ a{
             line-height: 28px;
             font-size: 28px;
             margin: 16px;
+        }
+        .menu-right{
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 60px;
+            height: 60px;
+            .menu-ctr{
+                position: absolute;
+                right: 16px;
+                top: 30px;
+                height: 30px;
+                width: 30px;
+                margin-top: -17px;
+                border:1px solid $color02;
+                border-radius: 5px;
+                cursor: pointer;
+                @include transition(all 0.4s);
+                span{
+                    position: absolute;
+                    top: 50%;
+                    left: 0;
+                    width: 100%;
+                    height: 2px;
+                    margin-top: -1px;
+                    background: $color01;
+                    @include transition(all 0.4s);
+                    &:before,&:after{
+                        content: '';
+                        position: absolute;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        background: $color01;
+                    }
+                    &:before{
+                        top: -14px;
+                    }
+                    &:after{
+                        bottom: -14px;
+                    }
+                }
+            }
+            &.hover{
+                .menu-ctr{
+                    border:1px solid $color01;
+                    @include transform(rotateZ(45deg));
+                    span{
+                        @include transform(rotateZ(-45deg) scale(0.5));
+                    }
+                }
+                &+.navmenu{
+                    height: ceil($menu_li_len/2)*(35px+15px*2);
+                }
+            }
+        }
+        .navmenu {
+            width: 100%;
+            position: absolute;
+            top: 60px;
+            background-color: $color04;
+            left: 0px;
+            padding: 0;
+            height: 0;
+            display: block;
+            li {
+                width: 50%;
+                float: left;
+                text-align: center;
+                padding: 15px 0;
+            }
         }
     }
 }
