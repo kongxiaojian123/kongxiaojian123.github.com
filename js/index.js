@@ -17,22 +17,22 @@ $.extend(Index.prototype, {
             if(res.code==1){
                 var data = res.data;
                 var eleStr = '';
-                var hash = location.hash.replace('#','')||data.pageList[0].url;
                 for(var i=0;i<data.pageList.length;i++){
                     var pageData = data.pageList[i];
                     eleStr +='<li';
-                    if(hash==pageData.url){
+                    if(i==0){
                         eleStr +=' class="current-nav"';
-                        _this.iframe.attr('src',pageData.url);
+                        _this.iframe.attr('src',pageData.url).data('url',pageData.url);
                     }
-                    eleStr +='><a href="#'+pageData.url+'" data-url="'+pageData.url+'">'+pageData.name+'</a></li>';
+                    eleStr +='><a href="javascript:;" data-url="'+pageData.url+'">'+pageData.name+'</a></li>';
                 }
                 $('.navmenu').html(eleStr);
             }
         });
         $('.navmenu').on('click','a',function () {
             var url = $(this).data('url');
-            _this.iframe.attr('src',url);
+            var iframeUrl = _this.iframe.data('url');
+            url!=iframeUrl&&_this.iframe.attr('src',url).data('url',url);
         });
     },
     bindEvent:function () {
