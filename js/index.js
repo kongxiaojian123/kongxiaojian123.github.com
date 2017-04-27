@@ -31,6 +31,7 @@ $.extend(Index.prototype, {
         });
         $('.navmenu').on('click','a',function () {
             var url = $(this).data('url');
+            $(this).parents('li').addClass('current-nav').siblings('.current-nav').removeClass('current-nav');
             var iframeUrl = _this.iframe.data('url');
             url!=iframeUrl&&_this.iframe.attr('src',url).data('url',url);
         });
