@@ -1,0 +1,20 @@
+/**
+ * Created by kongxiaojian on 16/11/8.
+ */
+@import "compass";
+@function rpx($size) {
+    $tempSize: $size/640;
+    @if (unit($tempSize)=='') {
+        @return $tempSize*1rem;
+    } @else if (unit($tempSize)=='px') {
+        @return $tempSize/1px*1rem;
+    } @else {
+        @return $size;
+    }
+}
+@media screen and (max-width:960px){
+
+}
+@media screen and (max-width:700px){
+
+}
