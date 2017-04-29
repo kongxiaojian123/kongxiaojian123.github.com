@@ -5,6 +5,15 @@
 @import "compass";
 @import "compass/reset";
 @import "../../../css/common";
-body{
-    height: 1200px;
+.test{
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: #000;
+}
+@media screen and (max-width:960px){
+
+}
+@media screen and (max-width:700px){
+
 }

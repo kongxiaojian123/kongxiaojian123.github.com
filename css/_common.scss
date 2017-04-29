@@ -2,6 +2,10 @@
  * Created by kongxiaojian on 16/11/8.
  */
 @import "compass";
+$color01:#f1f1f1;
+$color02:#161616;
+$color03:#777777;
+$color04:#0a0a0a;
 @function rpx($size) {
     $tempSize: $size/640;
     @if (unit($tempSize)=='') {
@@ -12,9 +16,60 @@
         @return $size;
     }
 }
+a{
+    text-decoration: none;
+}
+.main {
+    width: 96%;
+    margin: 0px auto;
+    padding: 100px 0;
+    .nav {
+        overflow: hidden;
+        zoom: 1;
+        padding-bottom: 50px;
+        height: 46px;
+        li {
+            float: left;
+            margin-right: 10px;
+            width: 100px;
+            @include transition(all,1s);
+            a {
+                display: block;
+                padding-bottom: 6px;
+                color: $color01;
+                text-align: center;
+                cursor: pointer;
+                span {
+                    display: block;
+                    height: 40px;
+                    line-height: 40px;
+                    background-color: $color03;
+                    border-radius: 4px;
+                    @include transition(all,1s);
+                }
+            }
+        }
+    }
+}
 @media screen and (max-width:960px){
 
 }
 @media screen and (max-width:700px){
 
+}
+@media screen and (max-width: 465px){
+    .main {
+        .nav {
+            li {
+                width: 80px;
+                a {
+                    span {
+                        height: 36px;
+                        line-height: 36px;
+                        font-size: 14px;
+                    }
+                }
+            }
+        }
+    }
 }
