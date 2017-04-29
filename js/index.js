@@ -24,7 +24,7 @@ $.extend(Index.prototype, {
                         eleStr +=' class="current-nav"';
                         _this.iframe.attr('src',pageData.url).data('url',pageData.url);
                     }
-                    eleStr +='><a href="javascript:;" data-url="'+pageData.url+'">'+pageData.name+'</a></li>';
+                    eleStr +='><a href="javascript:;" data-url="'+pageData.url+'">'+pageData.title+'</a></li>';
                 }
                 $('.navmenu').html(eleStr);
             }

@@ -1,11 +1,1 @@
-{
-  "code":1,
-  "data":{
-    "pageList":[
-      {"name":"HOME","url":"./modules/home/"},
-      {"name":"WORKS","url":"./modules/works/"},
-      {"name":"ABOUT","url":"./modules/about/"},
-      {"name":"JOINUS","url":"./modules/joinus/"}
-    ]
-  }
-}
+{"code":1,"data":{"pageList":[{"title":"HOME","desc":"klvivian.com home页面","url":"./modules/home/"},{"title":"HOME01","desc":"klvivian.com home页面","url":"./modules/home01/"}]}}
