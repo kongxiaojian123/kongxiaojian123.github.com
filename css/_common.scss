@@ -2,6 +2,7 @@
  * Created by kongxiaojian on 16/11/8.
  */
 @import "compass";
+$color00:#ffffff;
 $color01:#f1f1f1;
 $color02:#161616;
 $color03:#777777;
@@ -26,7 +27,7 @@ a{
     .navmenu {
         overflow: hidden;
         zoom: 1;
-        padding-bottom: 50px;
+        padding-bottom: 30px;
         li {
             position: relative;
             float: left;
@@ -69,6 +70,7 @@ a{
         }
     }
     .newsList{
+        padding-top: 20px;
         min-height: 810px;
         overflow: hidden;
         .news{
@@ -80,6 +82,8 @@ a{
             overflow: hidden;
             cursor: pointer;
             border: 2px solid rgba(0,0,0,0);
+            background: $color00;
+            @include box-shadow(0,0,20px,rgba(0,0,0,0.1));
             @include transition(border 1s);
             @include box-sizing(border-box);
             &:hover{
