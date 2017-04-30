@@ -21,7 +21,7 @@ $.extend(Index.prototype, {
                     var pageData = data.pageList[i];
                     eleStr +='<li';
                     if(i==0){
-                        eleStr +=' class="current-nav"';
+                        eleStr +=' class="tag-type"';
                         _this.iframe.attr('src',pageData.url).data('url',pageData.url);
                     }
                     eleStr +='><a href="javascript:;" data-url="'+pageData.url+'">'+pageData.title+'</a></li>';
@@ -37,13 +37,6 @@ $.extend(Index.prototype, {
         });
     },
     bindEvent:function () {
-        $('.menu-right').on('click',function () {
-            if($(this).hasClass('hover')){
-                $(this).removeClass('hover');
-            }else{
-                $(this).addClass('hover');
-            }
-        })
     }
 });
 new Index();
