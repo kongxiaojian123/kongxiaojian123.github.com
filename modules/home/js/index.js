@@ -56,8 +56,9 @@ $.extend(Index.prototype, {
     showPage:function () {
         var _this =this;
         var eleStr = '';
-        for(var i=0;i<20;i++){
-            var index = _this.currentPage*20+i;
+        var showLen = 20;
+        for(var i=0;i<showLen;i++){
+            var index = _this.currentPage*showLen+i;
             if(index>=_this.pageData.pageList.length)break;
             var pageData = _this.pageData.pageList[index];
             eleStr+='<li class="news" data-url="'+this.currentModule+pageData.url+'"><div class="newsImg"><span style="background-image: url('+this.currentModule+pageData.url+'imgs/banner.jpg);"></span></div><div class="newsDesc"><h2 class="newstitle">'+pageData.title+'</h2><p class="newsintro">'+pageData.desc+'</p></div></li>';
