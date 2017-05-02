@@ -61,7 +61,7 @@ $.extend(Index.prototype, {
             var index = _this.currentPage*showLen+i;
             if(index>=_this.pageData.pageList.length)break;
             var pageData = _this.pageData.pageList[index];
-            eleStr+='<li class="news" data-url="'+this.currentModule+pageData.url+'"><div class="newsImg"><span style="background-image: url('+this.currentModule+pageData.url+'imgs/banner.jpg);"></span></div><div class="newsDesc"><h2 class="newstitle">'+pageData.title+'</h2><p class="newsintro">'+pageData.desc+'</p></div></li>';
+            eleStr+='<li class="news" data-url="'+this.currentModule+pageData.url+'"><div class="newsImg"><span style="background-image: url('+this.currentModule+pageData.url+'imgs/banner.jpg);"></span></div><div class="newsDesc"><h2 class="newstitle">'+pageData.title+'</h2><p class="newsintro">'+pageData.desc+'</p><span class="newsdate">'+pageData.date+'</span></div></li>';
         }
         $('.newsList').html(eleStr);
     }
